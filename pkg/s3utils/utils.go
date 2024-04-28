@@ -66,7 +66,7 @@ func IsValidIP(ip string) bool {
 }
 
 // IsVirtualHostSupported - verifies if bucketName can be part of
-// virtual host. Currently only Amazon S3 and Google Cloud Storage
+// virtual host. Currently only Amazon S3, Google Cloud Storage, Aliyun OSS and TencentCloud COS
 // would support this.
 func IsVirtualHostSupported(endpointURL url.URL, bucketName string) bool {
 	if endpointURL == sentinelURL {
@@ -78,7 +78,8 @@ func IsVirtualHostSupported(endpointURL url.URL, bucketName string) bool {
 		return false
 	}
 	// Return true for all other cases
-	return IsAmazonEndpoint(endpointURL) || IsGoogleEndpoint(endpointURL) || IsAliyunOSSEndpoint(endpointURL)
+	return IsAmazonEndpoint(endpointURL) || IsGoogleEndpoint(endpointURL) ||
+		IsAliyunOSSEndpoint(endpointURL) || IsTencentEndpoint(endpointURL)
 }
 
 // Refer for region styles - https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region
@@ -170,6 +171,11 @@ func GetRegionFromURL(endpointURL url.URL) string {
 	}
 
 	return ""
+}
+
+// IsTencentEndpoint - Match if it is exactly TencentCloud COS endpoint.
+func IsTencentEndpoint(endpointURL url.URL) bool {
+	return strings.HasSuffix(endpointURL.Host, "myqcloud.com")
 }
 
 // IsAliyunOSSEndpoint - Match if it is exactly Aliyun OSS endpoint.
